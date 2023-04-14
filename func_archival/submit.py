@@ -118,7 +118,7 @@ class ScheduleWorkflow:
 
     #     """
     #     py_cmd = f"""{self._sbatch_head()}
-    #         from func_process import workflows
+    #         from func_archival import workflows
     #         workflows.preprocess(
     #             "{self._subj}",
     #             "{self._sess}",
@@ -149,7 +149,7 @@ class ScheduleWorkflow:
 
     #     """
     #     py_cmd = f"""{self._sbatch_head()}
-    #         from func_process import workflows
+    #         from func_archival import workflows
     #         workflows.model(
     #             "{self._subj}",
     #             "{self._sess}",
@@ -197,7 +197,7 @@ class ScheduleWorkflow:
 
         """
         py_cmd = f"""{self._sbatch_head()}
-            from func_process import workflows
+            from func_archival import workflows
             workflows.omnibus(
                 "{self._subj}",
                 "{self._sess}",

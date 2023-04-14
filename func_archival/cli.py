@@ -8,14 +8,7 @@ Requires func_preprocess TODO
 
 Examples
 --------
-func_archival -e ses-intake -s sub-NA9997
-
-func_archival \
-    -e ses-intake \
-    -s sub-NA9997 sub-NA9998 \
-    --no-freesurfer \
-    --fd-thresh 0.2 \
-    --ignore-fmaps
+func_archival -s sub-A00008326
 
 """
 # %%
@@ -89,15 +82,20 @@ def _get_args():
             """
         ),
     )
+    parser.add_argument(
+        "--session",
+        type=str,
+        default="ses-BAS1",
+        help=textwrap.dedent(
+            """\
+            [ses-BAS1]
+            BIDS session identifier
+            (default : %(default)s)
+            """
+        ),
+    )
 
     required_args = parser.add_argument_group("Required Arguments")
-    required_args.add_argument(
-        "-e",
-        "--session",
-        help="MRI session name, e.g. ses-BAS1",
-        type=str,
-        required=True,
-    )
     required_args.add_argument(
         "-s",
         "--subj-list",
@@ -120,7 +118,7 @@ def main():
 
     # Capture CLI arguments
     args = _get_args().parse_args()
-    subj_list = args.sub_list
+    subj_list = args.subj_list
     sess = args.session
     proj_dir = args.proj_dir
     ignore_fmaps = args.ignore_fmaps

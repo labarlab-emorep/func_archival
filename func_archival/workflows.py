@@ -116,6 +116,8 @@ def run_preprocess(
         log_dir,
         False,
     )
+
+    return
     fp_dict["scaled"] = pp.fsl_preproc(
         work_fsl,
         fp_dict,
