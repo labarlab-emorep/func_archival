@@ -227,65 +227,65 @@ class ScheduleWorkflow:
         print(f"{sp_out.decode('utf-8')}\tfor {self._subj}, {self._sess}")
 
 
-def schedule_subprocess(
-    bash_cmd,
-    job_name,
-    log_dir,
-    user_name,
-    num_hours=1,
-    num_cpus=1,
-    mem_gig=4,
-):
-    """Run bash commands as scheduled subprocesses.
+# def schedule_subprocess(
+#     bash_cmd,
+#     job_name,
+#     log_dir,
+#     user_name,
+#     num_hours=1,
+#     num_cpus=1,
+#     mem_gig=4,
+# ):
+#     """Run bash commands as scheduled subprocesses.
 
-    Parameters
-    ----------
-    bash_cmd : str
-        Bash syntax, work to schedule
-    job_name : str
-        Name for scheduler
-    log_dir : Path
-        Location of output dir for writing logs
-    user_name : str
-        DCC login user name
-    num_hours : int, optional
-        Walltime to schedule
-    num_cpus : int, optional
-        Number of CPUs required by job
-    mem_gig : int, optional
-        Job RAM requirement for each CPU (GB)
+#     Parameters
+#     ----------
+#     bash_cmd : str
+#         Bash syntax, work to schedule
+#     job_name : str
+#         Name for scheduler
+#     log_dir : Path
+#         Location of output dir for writing logs
+#     user_name : str
+#         DCC login user name
+#     num_hours : int, optional
+#         Walltime to schedule
+#     num_cpus : int, optional
+#         Number of CPUs required by job
+#     mem_gig : int, optional
+#         Job RAM requirement for each CPU (GB)
 
-    Returns
-    -------
-    tuple
-        [0] = stdout of subprocess
-        [1] = stderr of subprocess
+#     Returns
+#     -------
+#     tuple
+#         [0] = stdout of subprocess
+#         [1] = stderr of subprocess
 
-    Notes
-    -----
-    Avoid using double quotes in <bash_cmd> (particularly relevant
-    with AFNI) to avoid conflict with --wrap syntax.
+#     Notes
+#     -----
+#     Avoid using double quotes in <bash_cmd> (particularly relevant
+#     with AFNI) to avoid conflict with --wrap syntax.
 
-    """
-    sbatch_cmd = f"""
-        sbatch \
-        -J {job_name} \
-        -t {num_hours}:00:00 \
-        --cpus-per-task={num_cpus} \
-        --mem-per-cpu={mem_gig}000 \
-        -o {log_dir}/out_{job_name}.log \
-        -e {log_dir}/err_{job_name}.log \
-        --wait \
-        --wrap="{bash_cmd}"
-    """
-    print(f"Submitting SBATCH job:\n\t{sbatch_cmd}\n")
-    job_out, job_err = submit_subprocess(sbatch_cmd)
-    return (job_out, job_err)
+#     """
+#     sbatch_cmd = f"""
+#         sbatch \
+#         -J {job_name} \
+#         -t {num_hours}:00:00 \
+#         --cpus-per-task={num_cpus} \
+#         --mem-per-cpu={mem_gig}000 \
+#         -o {log_dir}/out_{job_name}.log \
+#         -e {log_dir}/err_{job_name}.log \
+#         --wait \
+#         --wrap="{bash_cmd}"
+#     """
+#     print(f"Submitting SBATCH job:\n\t{sbatch_cmd}\n")
+#     job_out, job_err = submit_subprocess(sbatch_cmd)
+#     return (job_out, job_err)
 
 
-def submit_subprocess(job_cmd: str) -> tuple:
-    """Submit bash as subprocess and return stdout, stderr."""
-    job_sp = subprocess.Popen(job_cmd, shell=True, stdout=subprocess.PIPE)
-    job_out, job_err = job_sp.communicate()
-    job_sp.wait()
-    return (job_out, job_err)
+# def submit_subprocess(job_cmd: str) -> tuple:
+#     """Submit bash as subprocess and return stdout, stderr."""
+#     job_sp = subprocess.Popen(job_cmd, shell=True, stdout=subprocess.PIPE)
+#     job_out, job_err = job_sp.communicate()
+#     job_sp.wait()
+#     return (job_out, job_err)

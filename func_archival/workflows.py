@@ -117,7 +117,6 @@ def run_preprocess(
         False,
     )
 
-    return
     fp_dict["scaled"] = pp.fsl_preproc(
         work_fsl,
         fp_dict,
@@ -129,6 +128,7 @@ def run_preprocess(
     return fp_dict
 
 
+# %%
 # def model(
 #     subj,
 #     sess,
@@ -158,11 +158,11 @@ def run_preprocess(
 #     for chk_dir in [proj_dir, work_dir, log_dir]:
 #         if not os.path.exists(chk_dir):
 #             raise FileNotFoundError(f"Expected directory : {chk_dir}")
-#     if model_name not in ["target"]:
+#     if model_name not in ["rest"]:
 #         raise ValueError(f"Unexpected model name : {model_name}")
 
 #     # Setup
-#     task = "task-emoreg"
+#     task = "task-rest"
 #     proj_deriv = os.path.join(proj_dir, "derivatives")
 #     subj_work = os.path.join(
 #         work_dir, f"model_fsl-{model_name}", subj, sess, "func"
@@ -194,6 +194,7 @@ def run_preprocess(
 #         )
 
 
+# %%
 def omnibus(
     subj,
     sess,
@@ -261,7 +262,7 @@ def omnibus(
             raise KeyError(f"Expected key {chk_key} in model_args")
 
     # Trigger workflows
-    _ = run_preprocess(
+    fp_dict = run_preprocess(
         subj,
         sess,
         proj_dir,
@@ -276,6 +277,7 @@ def omnibus(
         preproc_args["no_freesurfer"],
         preproc_args["sing_afni"],
     )
+    print(f"\n\nPreproc Finished, fp_dict :\n\n{fp_dict}\n")
     # model(
     #     subj,
     #     sess,
