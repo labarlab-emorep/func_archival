@@ -16,13 +16,13 @@ def preproc_model(
     preproc_args,
     model_args,
 ):
-    """Coordinate worklow methods.
+    """Preprocess and model archival resting-state data.
 
-    Conduct entire process workflow by coordinating step-specific
-    workflows. This method triggers the following steps:
-        -   preprocess
-        -   model
-        -   target_id
+    Wrap workflow methods from func_preprocess and func_model
+    to move archival anat and rest EPI data through the same
+    pipeline as the Exp2 data. First preprocess data via
+    fMRIPrep and FSL methods, then model resting-state data
+    via FSL's FEAT.
 
     Parameters
     ----------
@@ -37,9 +37,8 @@ def preproc_model(
     log_dir : str, os.PathLike
         Output location for capturing stdout/err
     preproc_args : dict
-        Argument and parameter specific for preprocess method,
-        requires keys that match preprocess keywords (see also
-        help(workflows.preprocess)):
+        Argument and parameters specific for preprocess method, required
+        keys (see also func_preprocess.workflows.run_preproc):
          -  ["sing_fmriprep"] = location of fmriprep.simg
          -  ["tplflow_dir"] = location of templateflow directory
          -  ["fs_license"] = location of Freesurfer license
@@ -48,9 +47,15 @@ def preproc_model(
          -  ["no_freesurfer"] = whether to turn off Freesrufer
          -  ["sing_afni"] = location of afni.simg
     model_args : dict
-        Same as preproc_args, but for workflows.model.
+        Argument and parameters specific for modeling method, required
+        keys (see also func_model.workflows.FslFirst):
         -   ["model_name"] = name of FSL model
         -   ["model_level"] = level of FSL model
+
+    Raises
+    ------
+    KeyError
+        Missing required keys in preproc_args or model_args
 
     """
     # Check for required keys

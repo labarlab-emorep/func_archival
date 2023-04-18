@@ -1,10 +1,12 @@
 r"""Run processing workflows for single subject.
 
-Description.
+Move archival data through preprocessing and FSL modeling. Wraps
+methods used for Exp2.
 
 Notes
 -----
-Requires func_preprocess TODO
+Requires local packages func_preprocess, func_model to be installed in
+same python environment.
 
 Examples
 --------
@@ -126,7 +128,6 @@ def main():
     fd_thresh = args.fd_thresh
     model_name = args.model_name
 
-    #
     if not os.path.exists(proj_dir):
         raise FileNotFoundError(f"Expected to find directory : {proj_dir}")
 
@@ -143,7 +144,7 @@ def main():
         print("Missing required global variable FSLDIR")
         sys.exit(1)
 
-    #
+    # Setup work, log directories
     work_dir = os.path.join("/work", user_name, "EmoRep")
     now_time = datetime.now().strftime("%y-%m-%d_%H:%M")
     log_dir = os.path.join(
@@ -154,7 +155,7 @@ def main():
     if not os.path.exists(log_dir):
         os.makedirs(log_dir)
 
-    #
+    # Build pipeline-step arguments
     preproc_args = {
         "sing_fmriprep": sing_fmriprep,
         "tplflow_dir": tplflow_dir,
@@ -166,7 +167,7 @@ def main():
     }
     model_args = {"model_name": model_name, "model_level": "first"}
 
-    #
+    # Submit workflows
     for subj in subj_list:
         sched_wf = submit.ScheduleWorkflow(
             subj, sess, proj_dir, work_dir, log_dir

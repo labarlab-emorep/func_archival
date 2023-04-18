@@ -11,7 +11,5 @@ setup(
             "func_archival=func_archival.cli:main",
         ]
     },
-    include_package_data=True,
-    package_data={"": ["reference_files/template*.fsf"]},
     install_requires=["setuptools>=65.6.3"],
 )
