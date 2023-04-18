@@ -146,15 +146,10 @@ def main():
     #
     work_dir = os.path.join("/work", user_name, "EmoRep")
     now_time = datetime.now().strftime("%y-%m-%d_%H:%M")
-    # log_dir = os.path.join(
-    #     work_dir,
-    #     "logs",
-    #     f"func_archival_{now_time}",
-    # )
     log_dir = os.path.join(
         work_dir,
         "logs",
-        "func_archival_test",
+        f"func_archival_{now_time}",
     )
     if not os.path.exists(log_dir):
         os.makedirs(log_dir)
@@ -169,14 +164,14 @@ def main():
         "no_freesurfer": no_freesurfer,
         "sing_afni": sing_afni,
     }
-    model_args = {"model_name": model_name}
+    model_args = {"model_name": model_name, "model_level": "first"}
 
     #
     for subj in subj_list:
         sched_wf = submit.ScheduleWorkflow(
-            subj, sess, proj_dir, work_dir, log_dir, user_name
+            subj, sess, proj_dir, work_dir, log_dir
         )
-        sched_wf.omnibus(preproc_args, model_args)
+        sched_wf.run_all(preproc_args, model_args)
         sched_wf.submit()
         time.sleep(3)
 
@@ -184,7 +179,6 @@ def main():
 if __name__ == "__main__":
 
     # Require proj env
-    # TODO require DCC env
     env_found = [x for x in sys.path if "emorep" in x]
     if not env_found:
         print("\nERROR: missing required project environment 'emorep'.")
