@@ -10,7 +10,7 @@ same python environment.
 
 Examples
 --------
-func_archival -s sub-A00008326
+func_archival -s sub-A00008326 -k $RSA_LS2 --preproc-type smoothed
 
 """
 # %%
@@ -73,18 +73,6 @@ def _get_args():
         ),
     )
     parser.add_argument(
-        "--proj-dir",
-        type=str,
-        default="/hpc/group/labarlab/EmoRep/Exp3_Classify_Archival/data_mri_BIDS",  # noqa: E501
-        help=textwrap.dedent(
-            """\
-            Required when --run-local.
-            Path to BIDS-formatted project directory
-            (default : %(default)s)
-            """
-        ),
-    )
-    parser.add_argument(
         "--session",
         type=str,
         default="ses-BAS1",
@@ -92,6 +80,30 @@ def _get_args():
             """\
             [ses-BAS1]
             BIDS session identifier
+            (default : %(default)s)
+            """
+        ),
+    )
+    parser.add_argument(
+        "--preproc-type",
+        type=str,
+        default="scaled",
+        help=textwrap.dedent(
+            """\
+            [scaled | smoothed]
+            Determine whether to use scaled or smoothed preprocessed EPIs
+            (default : %(default)s)
+            """
+        ),
+    )
+    parser.add_argument(
+        "--proj-dir",
+        type=str,
+        default="/hpc/group/labarlab/EmoRep/Exp3_Classify_Archival/data_mri_BIDS",  # noqa: E501
+        help=textwrap.dedent(
+            """\
+            Required when --run-local.
+            Path to BIDS-formatted project directory
             (default : %(default)s)
             """
         ),
@@ -104,6 +116,13 @@ def _get_args():
         nargs="+",
         help="List of subject IDs to submit for processing",
         type=str,
+        required=True,
+    )
+    required_args.add_argument(
+        "-k",
+        "--rsa-key",
+        type=str,
+        help="Location of labarserv2 RSA key",
         required=True,
     )
 
@@ -127,7 +146,11 @@ def main():
     no_freesurfer = args.no_freesurfer
     fd_thresh = args.fd_thresh
     model_name = args.model_name
+    rsa_key = args.rsa_key
+    preproc_type = args.preproc_type
 
+    # Validate user input
+    # TODO
     if not os.path.exists(proj_dir):
         raise FileNotFoundError(f"Expected to find directory : {proj_dir}")
 
@@ -165,7 +188,13 @@ def main():
         "no_freesurfer": no_freesurfer,
         "sing_afni": sing_afni,
     }
-    model_args = {"model_name": model_name, "model_level": "first"}
+    model_args = {
+        "model_name": model_name,
+        "model_level": "first",
+        "user_name": user_name,
+        "rsa_key": rsa_key,
+        "preproc_type": preproc_type,
+    }
 
     # Submit workflows
     for subj in subj_list:

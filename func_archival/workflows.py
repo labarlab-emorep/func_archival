@@ -51,6 +51,9 @@ def preproc_model(
         keys (see also func_model.workflows.FslFirst):
         -   ["model_name"] = name of FSL model
         -   ["model_level"] = level of FSL model
+        -   ["preproc_type"] = preprocessing step used
+        -   ["user_name"] = User name for DCC, labarserv2
+        -   ["rsa_key"] =  Location of RSA key for labarserv2
 
     Raises
     ------
@@ -71,7 +74,13 @@ def preproc_model(
     for chk_key in preproc_keys:
         if chk_key not in preproc_args.keys():
             raise KeyError(f"Expected key {chk_key} in preproc_args")
-    model_keys = ["model_name", "model_level"]
+    model_keys = [
+        "model_name",
+        "model_level",
+        "preproc_type",
+        "user_name",
+        "rsa_key",
+    ]
     for chk_key in model_keys:
         if chk_key not in model_args.keys():
             raise KeyError(f"Expected key {chk_key} in model_args")
@@ -106,9 +115,16 @@ def preproc_model(
         sess,
         model_args["model_name"],
         model_args["model_level"],
+        model_args["preproc_type"],
         proj_raw,
         proj_deriv,
         work_dir,
         log_dir,
+        model_args["user_name"],
+        model_args["rsa_key"],
+        keoki_path="/mnt/keoki/experiments2/EmoRep/Exp3_Classify_Archival/data_mri_BIDS",  # noqa: E501
     )
     wf_fsl.model_rest()
+
+
+# %%
