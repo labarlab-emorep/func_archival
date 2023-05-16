@@ -9,10 +9,12 @@ from func_model import workflows as wf_fm
 # %%
 def preproc_model(
     subj,
-    sess,
+    sess_list,
     proj_dir,
     work_dir,
     log_dir,
+    user_name,
+    rsa_key,
     preproc_args,
     model_args,
 ):
@@ -28,14 +30,18 @@ def preproc_model(
     ----------
     subj : str
         BIDS subject
-    sess : str
-        BIDS session
+    sess_list : list
+        BIDS session identifiers
     proj_dir : str, os.PathLike
         Location of project directory
     work_dir : str, os.PathLike
         Location of working directory, for intermediates
     log_dir : str, os.PathLike
         Output location for capturing stdout/err
+    user_name : str, optional
+        User name for DCC, labarserv2
+    rsa_key : str, os.PathLike, optional
+        Location of RSA key for labarserv2
     preproc_args : dict
         Argument and parameters specific for preprocess method, required
         keys (see also func_preprocess.workflows.run_preproc):
@@ -44,7 +50,6 @@ def preproc_model(
          -  ["fs_license"] = location of Freesurfer license
          -  ["fd_thresh"] = framewise displacement threshold
          -  ["ignore_fmaps"] = whether to ignore field maps
-         -  ["no_freesurfer"] = whether to turn off Freesrufer
          -  ["sing_afni"] = location of afni.simg
     model_args : dict
         Argument and parameters specific for modeling method, required
@@ -52,8 +57,6 @@ def preproc_model(
         -   ["model_name"] = name of FSL model
         -   ["model_level"] = level of FSL model
         -   ["preproc_type"] = preprocessing step used
-        -   ["user_name"] = User name for DCC, labarserv2
-        -   ["rsa_key"] =  Location of RSA key for labarserv2
 
     Raises
     ------
@@ -68,7 +71,6 @@ def preproc_model(
         "fs_license",
         "fd_thresh",
         "ignore_fmaps",
-        "no_freesurfer",
         "sing_afni",
     ]
     for chk_key in preproc_keys:
@@ -78,8 +80,6 @@ def preproc_model(
         "model_name",
         "model_level",
         "preproc_type",
-        "user_name",
-        "rsa_key",
     ]
     for chk_key in model_keys:
         if chk_key not in model_args.keys():
@@ -89,13 +89,17 @@ def preproc_model(
     proj_raw = os.path.join(proj_dir, "rawdata")
     proj_deriv = os.path.join(proj_dir, "derivatives")
     proj_pp = os.path.join(proj_deriv, "pre_processing")
+    keoki_path = (
+        "/mnt/keoki/experiments2/EmoRep/Exp3_Classify_Archival/data_mri_BIDS"
+    )
 
     # Trigger workflows
-    chk_path = os.path.join(proj_pp, "fsl_denoise", subj, sess, "func")
+    chk_path = os.path.join(proj_pp, "fsl_denoise", subj, sess_list[0], "func")
     chk_scale = glob.glob(f"{chk_path}/*scaled_bold.nii.gz")
     if not chk_scale:
         wf_fp.run_preproc(
             subj,
+            sess_list,
             proj_raw,
             proj_pp,
             os.path.join(work_dir, "pre_processing"),
@@ -104,15 +108,17 @@ def preproc_model(
             preproc_args["fs_license"],
             preproc_args["fd_thresh"],
             preproc_args["ignore_fmaps"],
-            preproc_args["no_freesurfer"],
             preproc_args["sing_afni"],
             log_dir,
             False,
+            user_name,
+            rsa_key,
+            keoki_path,
         )
 
     wf_fsl = wf_fm.FslFirst(
         subj,
-        sess,
+        sess_list[0],
         model_args["model_name"],
         model_args["model_level"],
         model_args["preproc_type"],
@@ -120,9 +126,9 @@ def preproc_model(
         proj_deriv,
         work_dir,
         log_dir,
-        model_args["user_name"],
-        model_args["rsa_key"],
-        keoki_path="/mnt/keoki/experiments2/EmoRep/Exp3_Classify_Archival/data_mri_BIDS",  # noqa: E501
+        user_name,
+        rsa_key,
+        keoki_path,
     )
     wf_fsl.model_rest()
 

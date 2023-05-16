@@ -1,4 +1,8 @@
-"""Methods for submitting BASH commands to subprocess or SLURM scheduler."""
+"""Methods for submitting BASH commands to subprocess or SLURM scheduler.
+
+ScheduleWorkflow : generate and submit python workflow script
+
+"""
 import os
 import sys
 import textwrap
@@ -19,15 +23,15 @@ class ScheduleWorkflow:
 
     Methods
     -------
-    run_all(**args)
+    run_all(*args)
         Generate omnibus workflow script
     submit()
         Submit workflow script as SBATCH job
 
     Example
     -------
-    sw = ScheduleWorkflow(**args)
-    sw.run_all(**args)
+    sw = ScheduleWorkflow(*args)
+    sw.run_all(*args)
     sw.submit()
 
     """
@@ -35,10 +39,12 @@ class ScheduleWorkflow:
     def __init__(
         self,
         subj,
-        sess,
+        sess_list,
         proj_dir,
         work_dir,
         log_dir,
+        user_name,
+        rsa_key,
     ):
         """Initialize.
 
@@ -46,36 +52,43 @@ class ScheduleWorkflow:
         ----------
         subj : str
             BIDS subject
-        sess : str
-            BIDS session
+        sess_list : list
+            BIDS session identifiers
         proj_dir : str, os.PathLike
             Location of project directory
         work_dir : str, os.PathLike
             Location of working directory, for intermediates
         log_dir : str, os.PathLike
             Output location for capturing stdout/err
+        user_name : str, optional
+            User name for DCC, labarserv2
+        rsa_key : str, os.PathLike, optional
+            Location of RSA key for labarserv2
 
         """
         self._subj = subj
-        self._sess = sess
+        self._sess_list = sess_list
         self._proj_dir = proj_dir
         self._work_dir = work_dir
         self._log_dir = log_dir
+        self._user_name = user_name
+        self._rsa_key = rsa_key
 
     def _sbatch_head(self) -> str:
         """Return sbatch preamble."""
         return f"""\
             #!/bin/env {sys.executable}
-            #SBATCH --job-name=p{self._subj[4:]}
-            #SBATCH --output={self._log_dir}/par{self._subj[4:]}.txt
-            #SBATCH --time=30:00:00
-            #SBATCH --mem=4000
+            #SBATCH --job-name=p{self._subj[-4:]}
+            #SBATCH --output={self._log_dir}/par{self._subj[-4:]}.txt
+            #SBATCH --time=40:00:00
+            #SBATCH --cpus-per-task=3
+            #SBATCH --mem-per-cpu=4G
         """
 
     def _write_script(self, wf_name: str, wf_cmd: str):
         """Write generated workflow command to script."""
         self.py_script = os.path.join(
-            self._log_dir, f"run_{wf_name}_{self._subj}_{self._sess}.py"
+            self._log_dir, f"run_{wf_name}_{self._subj}.py"
         )
         with open(self.py_script, "w") as ps:
             ps.write(wf_cmd)
@@ -85,7 +98,7 @@ class ScheduleWorkflow:
 
         Make a workflow call for a single session of a subject.
         Saves script to:
-            <log_dir>/run_omnibus_<subj>_<sess>.py
+            <log_dir>/run_omnibus_<subj>.py
 
         Parameters
         ----------
@@ -101,10 +114,12 @@ class ScheduleWorkflow:
             from func_archival import workflows
             workflows.preproc_model(
                 "{self._subj}",
-                "{self._sess}",
+                {self._sess_list},
                 "{self._proj_dir}",
                 "{self._work_dir}",
                 "{self._log_dir}",
+                "{self._user_name}",
+                "{self._rsa_key}",
                 {preproc_args},
                 {model_args},
             )
@@ -124,4 +139,4 @@ class ScheduleWorkflow:
             stdout=subprocess.PIPE,
         )
         sp_out, _ = sp_job.communicate()
-        print(f"{sp_out.decode('utf-8')}\tfor {self._subj}, {self._sess}")
+        print(f"{sp_out.decode('utf-8')}\tfor {self._subj}")

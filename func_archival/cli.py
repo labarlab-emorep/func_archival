@@ -63,23 +63,12 @@ def _get_args():
         ),
     )
     parser.add_argument(
-        "--no-freesurfer",
-        action="store_true",
+        "--sessions",
+        nargs="+",
+        default=["ses-BAS1"],
         help=textwrap.dedent(
             """\
-            Whether to use the --fs-no-reconall option with fmriprep,
-            True if "--no--freesurfer" else False.
-            """
-        ),
-    )
-    parser.add_argument(
-        "--session",
-        type=str,
-        default="ses-BAS1",
-        help=textwrap.dedent(
-            """\
-            [ses-BAS1]
-            BIDS session identifier
+            List of BIDS session identifiers
             (default : %(default)s)
             """
         ),
@@ -140,10 +129,9 @@ def main():
     # Capture CLI arguments
     args = _get_args().parse_args()
     subj_list = args.subj_list
-    sess = args.session
+    sess_list = args.sessions
     proj_dir = args.proj_dir
     ignore_fmaps = args.ignore_fmaps
-    no_freesurfer = args.no_freesurfer
     fd_thresh = args.fd_thresh
     model_name = args.model_name
     rsa_key = args.rsa_key
@@ -169,7 +157,7 @@ def main():
 
     # Setup work, log directories
     work_dir = os.path.join("/work", user_name, "EmoRep")
-    now_time = datetime.now().strftime("%y-%m-%d_%H:%M")
+    now_time = datetime.now().strftime("%y%m%d_%H%M")
     log_dir = os.path.join(
         work_dir,
         "logs",
@@ -185,21 +173,18 @@ def main():
         "fs_license": fs_license,
         "fd_thresh": fd_thresh,
         "ignore_fmaps": ignore_fmaps,
-        "no_freesurfer": no_freesurfer,
         "sing_afni": sing_afni,
     }
     model_args = {
         "model_name": model_name,
         "model_level": "first",
-        "user_name": user_name,
-        "rsa_key": rsa_key,
         "preproc_type": preproc_type,
     }
 
     # Submit workflows
     for subj in subj_list:
         sched_wf = submit.ScheduleWorkflow(
-            subj, sess, proj_dir, work_dir, log_dir
+            subj, sess_list, proj_dir, work_dir, log_dir, user_name, rsa_key
         )
         sched_wf.run_all(preproc_args, model_args)
         sched_wf.submit()
