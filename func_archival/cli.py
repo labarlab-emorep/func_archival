@@ -10,7 +10,7 @@ same python environment.
 
 Examples
 --------
-func_archival -s sub-A00008326 -k $RSA_LS2 --preproc-type smoothed
+func_archival -s sub-08326 -k $RSA_LS2 --preproc-type smoothed
 
 """
 # %%
