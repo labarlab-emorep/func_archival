@@ -1,4 +1,12 @@
-"""Workflows for managing data pipeline."""
+"""Workflows for managing data pipeline.
+
+preproc_model : Preprocess and model resting EPI data
+
+Notes
+-----
+Requires func_preprocess and func_model.
+
+"""
 # %%
 import os
 import glob
