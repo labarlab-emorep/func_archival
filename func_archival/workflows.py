@@ -119,16 +119,15 @@ def preproc_model(
             preproc_args["sing_afni"],
             log_dir,
             False,
-            user_name,
-            rsa_key,
-            keoki_path,
+            user_name=user_name,
+            rsa_key=rsa_key,
+            keoki_path=keoki_path,
         )
 
     wf_fsl = wf_fm.FslFirst(
         subj,
         sess_list[0],
         model_args["model_name"],
-        model_args["model_level"],
         model_args["preproc_type"],
         proj_raw,
         proj_deriv,
@@ -136,7 +135,7 @@ def preproc_model(
         log_dir,
         user_name,
         rsa_key,
-        keoki_path,
+        keoki_path=keoki_path,
     )
     wf_fsl.model_rest()
 
