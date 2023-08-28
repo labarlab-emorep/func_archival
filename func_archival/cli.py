@@ -21,13 +21,15 @@ import textwrap
 from datetime import datetime
 from argparse import ArgumentParser, RawTextHelpFormatter
 from func_archival import submit
+import func_archival._version as ver
 
 
 # %%
 def _get_args():
     """Get and parse arguments."""
+    ver_info = f"\nVersion : {ver.__version__}\n\n"
     parser = ArgumentParser(
-        description=__doc__, formatter_class=RawTextHelpFormatter
+        description=ver_info + __doc__, formatter_class=RawTextHelpFormatter
     )
     parser.add_argument(
         "--ignore-fmaps",
