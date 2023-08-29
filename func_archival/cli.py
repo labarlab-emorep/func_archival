@@ -1,16 +1,16 @@
 r"""Run processing workflows for single subject.
 
 Move archival data through preprocessing and FSL modeling. Wraps
-methods used for Exp2.
-
-Notes
------
-Requires local packages func_preprocess, func_model to be installed in
-same python environment.
+methods used for Exp2_Compute_Emotion.
 
 Examples
 --------
-func_archival -s sub-08326 -k $RSA_LS2 --preproc-type smoothed
+func_archival -k $RSA_LS2 -s sub-08326
+
+func_archival \
+    -k $RSA_LS2 \
+    -s sub-08326 \
+    --preproc-type smoothed
 
 """
 # %%
@@ -21,13 +21,15 @@ import textwrap
 from datetime import datetime
 from argparse import ArgumentParser, RawTextHelpFormatter
 from func_archival import submit
+import func_archival._version as ver
 
 
 # %%
 def _get_args():
     """Get and parse arguments."""
+    ver_info = f"\nVersion : {ver.__version__}\n\n"
     parser = ArgumentParser(
-        description=__doc__, formatter_class=RawTextHelpFormatter
+        description=ver_info + __doc__, formatter_class=RawTextHelpFormatter
     )
     parser.add_argument(
         "--ignore-fmaps",
