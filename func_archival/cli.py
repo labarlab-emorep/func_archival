@@ -1,16 +1,16 @@
 r"""Run processing workflows for single subject.
 
 Move archival data through preprocessing and FSL modeling. Wraps
-methods used for Exp2.
-
-Notes
------
-Requires local packages func_preprocess, func_model to be installed in
-same python environment.
+methods used for Exp2_Compute_Emotion.
 
 Examples
 --------
-func_archival -s sub-08326 -k $RSA_LS2 --preproc-type smoothed
+func_archival -k $RSA_LS2 -s sub-08326
+
+func_archival \
+    -k $RSA_LS2 \
+    -s sub-08326 \
+    --preproc-type smoothed
 
 """
 # %%

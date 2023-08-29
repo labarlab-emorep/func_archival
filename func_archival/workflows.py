@@ -4,14 +4,16 @@ preproc_model : Preprocess and model resting EPI data
 
 Notes
 -----
-Requires func_preprocess and func_model.
+EmoRep dependencies:
+    func_preprocess>=2.3.0
+    func_model>=4.0.0
 
 """
 # %%
 import os
 import glob
 from func_preprocess import workflows as wf_fp
-from func_model import workflows as wf_fm
+from func_model.workflows import wf_fsl
 
 
 # %%
@@ -124,7 +126,7 @@ def preproc_model(
             keoki_path=keoki_path,
         )
 
-    wf_fsl = wf_fm.FslFirst(
+    wf_obj = wf_fsl.FslFirst(
         subj,
         sess_list[0],
         model_args["model_name"],
@@ -137,7 +139,7 @@ def preproc_model(
         rsa_key,
         keoki_path=keoki_path,
     )
-    wf_fsl.model_rest()
+    wf_obj.model_rest()
 
 
 # %%
