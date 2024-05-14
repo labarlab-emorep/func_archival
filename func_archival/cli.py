@@ -3,16 +3,15 @@ r"""Run processing workflows for single subject.
 Move archival data through preprocessing and FSL modeling. Wraps
 methods used for Exp2_Compute_Emotion.
 
-Examples
---------
-func_archival -k $RSA_LS2 -s sub-08326
-
+Example
+-------
+func_archival -s sub-08326
 func_archival \
-    -k $RSA_LS2 \
     -s sub-08326 \
     --preproc-type smoothed
 
 """
+
 # %%
 import os
 import sys
@@ -53,21 +52,10 @@ def _get_args():
         ),
     )
     parser.add_argument(
-        "--model-name",
-        type=str,
-        default="rest",
-        help=textwrap.dedent(
-            """\
-            [rest]
-            FSL model name, for triggering different workflows
-            (default : %(default)s)
-            """
-        ),
-    )
-    parser.add_argument(
         "--sessions",
         nargs="+",
         default=["ses-BAS1"],
+        choices=["ses-BAS1"],
         help=textwrap.dedent(
             """\
             List of BIDS session identifiers
@@ -79,9 +67,9 @@ def _get_args():
         "--preproc-type",
         type=str,
         default="scaled",
+        choices=["scaled", "smoothed"],
         help=textwrap.dedent(
             """\
-            [scaled | smoothed]
             Determine whether to use scaled or smoothed preprocessed EPIs
             (default : %(default)s)
             """
@@ -93,7 +81,6 @@ def _get_args():
         default="/hpc/group/labarlab/EmoRep/Exp3_Classify_Archival/data_mri_BIDS",  # noqa: E501
         help=textwrap.dedent(
             """\
-            Required when --run-local.
             Path to BIDS-formatted project directory
             (default : %(default)s)
             """
@@ -107,13 +94,6 @@ def _get_args():
         nargs="+",
         help="List of subject IDs to submit for processing",
         type=str,
-        required=True,
-    )
-    required_args.add_argument(
-        "-k",
-        "--rsa-key",
-        type=str,
-        help="Location of labarserv2 RSA key",
         required=True,
     )
 
@@ -135,30 +115,10 @@ def main():
     proj_dir = args.proj_dir
     ignore_fmaps = args.ignore_fmaps
     fd_thresh = args.fd_thresh
-    model_name = args.model_name
-    rsa_key = args.rsa_key
     preproc_type = args.preproc_type
 
-    # Validate user input
-    # TODO
-    if not os.path.exists(proj_dir):
-        raise FileNotFoundError(f"Expected to find directory : {proj_dir}")
-
-    # Get, check environmental vars
-    sing_afni = os.environ["SING_AFNI"]
-    sing_fmriprep = os.environ["SING_FMRIPREP"]
-    fs_license = os.environ["FS_LICENSE"]
-    tplflow_dir = os.environ["SINGULARITYENV_TEMPLATEFLOW_HOME"]
-    user_name = os.environ["USER"]
-
-    try:
-        os.environ["FSLDIR"]
-    except KeyError:
-        print("Missing required global variable FSLDIR")
-        sys.exit(1)
-
     # Setup work, log directories
-    work_dir = os.path.join("/work", user_name, "EmoRep")
+    work_dir = os.path.join("/work", os.environ["USER"], "Archival")
     now_time = datetime.now().strftime("%y%m%d_%H%M")
     log_dir = os.path.join(
         work_dir,
@@ -170,15 +130,11 @@ def main():
 
     # Build pipeline-step arguments
     preproc_args = {
-        "sing_fmriprep": sing_fmriprep,
-        "tplflow_dir": tplflow_dir,
-        "fs_license": fs_license,
         "fd_thresh": fd_thresh,
         "ignore_fmaps": ignore_fmaps,
-        "sing_afni": sing_afni,
     }
     model_args = {
-        "model_name": model_name,
+        "model_name": "rest",
         "model_level": "first",
         "preproc_type": preproc_type,
     }
@@ -186,7 +142,7 @@ def main():
     # Submit workflows
     for subj in subj_list:
         sched_wf = submit.ScheduleWorkflow(
-            subj, sess_list, proj_dir, work_dir, log_dir, user_name, rsa_key
+            subj, sess_list, proj_dir, work_dir, log_dir
         )
         sched_wf.run_all(preproc_args, model_args)
         sched_wf.submit()
