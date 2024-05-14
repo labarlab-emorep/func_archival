@@ -3,6 +3,7 @@
 ScheduleWorkflow : generate and submit python workflow script
 
 """
+
 import os
 import sys
 import textwrap
@@ -43,8 +44,6 @@ class ScheduleWorkflow:
         proj_dir,
         work_dir,
         log_dir,
-        user_name,
-        rsa_key,
     ):
         """Initialize.
 
@@ -60,10 +59,6 @@ class ScheduleWorkflow:
             Location of working directory, for intermediates
         log_dir : str, os.PathLike
             Output location for capturing stdout/err
-        user_name : str, optional
-            User name for DCC, labarserv2
-        rsa_key : str, os.PathLike, optional
-            Location of RSA key for labarserv2
 
         """
         self._subj = subj
@@ -71,8 +66,6 @@ class ScheduleWorkflow:
         self._proj_dir = proj_dir
         self._work_dir = work_dir
         self._log_dir = log_dir
-        self._user_name = user_name
-        self._rsa_key = rsa_key
 
     def _sbatch_head(self) -> str:
         """Return sbatch preamble."""
@@ -118,8 +111,6 @@ class ScheduleWorkflow:
                 "{self._proj_dir}",
                 "{self._work_dir}",
                 "{self._log_dir}",
-                "{self._user_name}",
-                "{self._rsa_key}",
                 {preproc_args},
                 {model_args},
             )

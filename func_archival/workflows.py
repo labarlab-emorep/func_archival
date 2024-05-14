@@ -9,6 +9,7 @@ EmoRep dependencies:
     func_model>=4.0.0
 
 """
+
 # %%
 import os
 import glob
@@ -23,8 +24,6 @@ def preproc_model(
     proj_dir,
     work_dir,
     log_dir,
-    user_name,
-    rsa_key,
     preproc_args,
     model_args,
 ):
@@ -48,19 +47,11 @@ def preproc_model(
         Location of working directory, for intermediates
     log_dir : str, os.PathLike
         Output location for capturing stdout/err
-    user_name : str, optional
-        User name for DCC, labarserv2
-    rsa_key : str, os.PathLike, optional
-        Location of RSA key for labarserv2
     preproc_args : dict
         Argument and parameters specific for preprocess method, required
         keys (see also func_preprocess.workflows.run_preproc):
-         -  ["sing_fmriprep"] = location of fmriprep.simg
-         -  ["tplflow_dir"] = location of templateflow directory
-         -  ["fs_license"] = location of Freesurfer license
          -  ["fd_thresh"] = framewise displacement threshold
          -  ["ignore_fmaps"] = whether to ignore field maps
-         -  ["sing_afni"] = location of afni.simg
     model_args : dict
         Argument and parameters specific for modeling method, required
         keys (see also func_model.workflows.FslFirst):
@@ -76,12 +67,8 @@ def preproc_model(
     """
     # Check for required keys
     preproc_keys = [
-        "sing_fmriprep",
-        "tplflow_dir",
-        "fs_license",
         "fd_thresh",
         "ignore_fmaps",
-        "sing_afni",
     ]
     for chk_key in preproc_keys:
         if chk_key not in preproc_args.keys():
@@ -112,17 +99,10 @@ def preproc_model(
             sess_list,
             proj_raw,
             proj_pp,
-            os.path.join(work_dir, "pre_processing"),
-            preproc_args["sing_fmriprep"],
-            preproc_args["tplflow_dir"],
-            preproc_args["fs_license"],
+            work_dir,
             preproc_args["fd_thresh"],
             preproc_args["ignore_fmaps"],
-            preproc_args["sing_afni"],
             log_dir,
-            False,
-            user_name=user_name,
-            rsa_key=rsa_key,
             keoki_path=keoki_path,
         )
 
@@ -135,8 +115,6 @@ def preproc_model(
         proj_deriv,
         work_dir,
         log_dir,
-        user_name,
-        rsa_key,
         keoki_path=keoki_path,
     )
     wf_obj.model_rest()
