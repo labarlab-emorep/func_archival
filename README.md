@@ -12,7 +12,7 @@ Contents:
 ## Setup
 * Install into project environment on the Duke Compute Cluster (DCC: see [here](https://github.com/labarlab/conda_dcc#conda_dcc))
 * Follow setup instructions for [func_preprocess](https://github.com/labarlab-emorep/func_preprocess?tab=readme-ov-file#setup)
-* Follow setup instructions for [func_model](https://github.com/labarlab-emorep/func_model#setup), specificall the `fsl_model` section
+* Follow setup instructions for [func_model](https://github.com/labarlab-emorep/func_model#setup), specifically the `fsl_model` section
 
 
 ## Requirements
