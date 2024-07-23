@@ -22,7 +22,7 @@ In addition to any requrements specified for [func_preprocess](https://github.co
 
 
 ## Usage
-The CLI `$func_archival` supplies a number of options (as well as their corresponding defaults if optional) that allow the user to speicfy the subject and session of the data to be processed. Trigger help and usage via `$func_archival`:
+The CLI supplies a number of parameters (as well as their corresponding default arguments when optional) that allow the user to specify the subject and session of the data to be processed. Trigger help and usage via `$func_archival`:
 
 ```
 (emorep)[nmm51-dcc: ~]$func_archival
