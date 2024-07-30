@@ -2,12 +2,6 @@
 
 This package conducts preprocessing and first-level modeling of archival rsfMRI data hosted by the [Nathan Kline Institute](http://fcon_1000.projects.nitrc.org/indi/enhanced/index.html). Functionally, this package is a wrapper of [func_preprocess](https://github.com/labarlab-emorep/func_preprocess) and [func_model](https://github.com/labarlab-emorep/func_model), which ensures that all data for the EmoRep project move through the same pipeline.
 
-Contents:
-* [Setup](#setup)
-* [Requirements](#requirements)
-* [Usage](#usage)
-* [Functionality](#functionality)
-
 
 ## Setup
 * Install into project environment on the Duke Compute Cluster (DCC: see [here](https://github.com/labarlab/conda_dcc#conda_dcc))
