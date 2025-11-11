@@ -78,7 +78,7 @@ def _get_args():
     parser.add_argument(
         "--proj-dir",
         type=str,
-        default="/hpc/group/labarlab/EmoRep/Exp3_Classify_Archival/data_mri_BIDS",  # noqa: E501
+        default=f"{os.environ["NKI_DIR"]}/data_mri_BIDS",  # noqa: E501
         help=textwrap.dedent(
             """\
             Path to BIDS-formatted project directory
@@ -118,7 +118,7 @@ def main():
     preproc_type = args.preproc_type
 
     # Setup work, log directories
-    work_dir = os.path.join("/work", os.environ["USER"], "Archival")
+    work_dir = os.path.join(os.environ["WORK_DIR"], os.environ["USER"], "Archival")
     now_time = datetime.now().strftime("%y%m%d_%H%M")
     log_dir = os.path.join(
         work_dir,

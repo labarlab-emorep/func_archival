@@ -86,9 +86,7 @@ def preproc_model(
     proj_raw = os.path.join(proj_dir, "rawdata")
     proj_deriv = os.path.join(proj_dir, "derivatives")
     proj_pp = os.path.join(proj_deriv, "pre_processing")
-    keoki_path = (
-        "/mnt/keoki/experiments2/EmoRep/Exp3_Classify_Archival/data_mri_BIDS"
-    )
+    server_path = f"{os.environ["NKI_DIR"]}/data_mri_BIDS"
 
     # Trigger workflows
     chk_path = os.path.join(proj_pp, "fsl_denoise", subj, sess_list[0], "func")
@@ -103,7 +101,7 @@ def preproc_model(
             preproc_args["fd_thresh"],
             preproc_args["ignore_fmaps"],
             log_dir,
-            keoki_path=keoki_path,
+            server_path=server_path,
         )
 
     wf_obj = wf_fsl.FslFirst(
@@ -115,7 +113,7 @@ def preproc_model(
         proj_deriv,
         work_dir,
         log_dir,
-        keoki_path=keoki_path,
+        server_path=server_path,
     )
     wf_obj.model_rest()
 

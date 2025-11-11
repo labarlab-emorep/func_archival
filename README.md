@@ -19,7 +19,7 @@ In addition to any requrements specified for [func_preprocess](https://github.co
 The CLI supplies a number of parameters (as well as their corresponding default arguments when optional) that allow the user to specify the subject and session of the data to be processed. Trigger help and usage via `$func_archival`:
 
 ```
-(emorep)[nmm51-dcc: ~]$func_archival
+$func_archival
 usage: func_archival [-h] [--ignore-fmaps] [--fd-thresh FD_THRESH] [--sessions {ses-BAS1} [{ses-BAS1} ...]]
                      [--preproc-type {scaled,smoothed}] [--proj-dir PROJ_DIR] -s SUBJ_LIST [SUBJ_LIST ...]
 
@@ -51,7 +51,7 @@ optional arguments:
                         Determine whether to use scaled or smoothed preprocessed EPIs
                         (default : scaled)
   --proj-dir PROJ_DIR   Path to BIDS-formatted project directory
-                        (default : /hpc/group/labarlab/EmoRep/Exp3_Classify_Archival/data_mri_BIDS)
+                        (default : f"{os.environ["NKI_DIR"]}/data_mri_BIDS")
 
 Required Arguments:
   -s SUBJ_LIST [SUBJ_LIST ...], --subj-list SUBJ_LIST [SUBJ_LIST ...]
@@ -64,17 +64,17 @@ Workflows for the EmoRep project used default options (e.g. with scaled data and
 ## Functionality
 For each subject and session specified, this workflow will:
 1. Conduct preprocessing via [func_preprocess](https://github.com/labarlab-emorep/func_preprocess):
-    1. Download rawdata from Keoki
+    1. Download rawdata from lab data server
     1. Pre-run FreeSurfer
     1. Run fMRIPrep
     1. Conduct extra preprocessing
-    1. Upload output to Keoki
+    1. Upload output to lab data server
 1. Conduct FSL first-level models for resting state via [func_model](https://github.com/labarlab-emorep/func_model):
-    1. Download data from Keoki
+    1. Download data from lab data server
     1. Generate confound files
     1. Build a design FSF file from pre-generated templates
     1. Execute design via FSL `feat`
-    1. Upload output to Keoki
+    1. Upload output to lab data server
 
 Preprocessed output is organized in the derivatives sub-directory 'pre_processing':
 
